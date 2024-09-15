@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <sys/time.h>
+#include "BlockedQueue.h"
 
 unsigned int on = 0;
 
@@ -28,6 +29,23 @@ int main()
     {
         // estabelecer validacao para encerrar o loop
     }
+
+
+    //just to test de blockedQueue
+    // BlockedQueue *queue = initBlockedQueue(3);
+
+    // Process *process = initProcess("hello",12,1,1,1,1);
+    // Process *process2 = initProcess("hello2",12,1,1,1,1);
+    // addBlockedProcess(queue,process);
+    // addBlockedProcess(queue,process2);
+
+    // printf("%s\n", queue->processes[0]->name);
+    // printf("%s\n", queue->processes[1]->name);
+
+
+    // removeBlockedProcess(queue);
+    // freeBlockedQueue(queue);
+
 
     return 0;
 }

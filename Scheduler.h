@@ -6,7 +6,7 @@
 #include "Process.h"
 
 typedef struct Scheduler {
-    ReadyQueue *ready;    // Queue for ready processes
+    ReadyQueue *readyQueue;    // Queue for ready processes
     BlockedQueue *blockedQueue; // 
 
     Process *exited;          // Pointer to the last exited process

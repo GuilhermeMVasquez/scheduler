@@ -2,8 +2,10 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <sys/time.h>
+
 #include "BlockedQueue.h"
 #include "ReadyQueue.h"
+#include "Scheduler.h"
 
 unsigned int on = 0;
 
@@ -75,6 +77,26 @@ int main()
     // recalculateCredits(queue);
 
     // printf("%u\n", dequeBlockedProcess(queue, 6)->credits);
+
+    // Teste Scheduler
+    // Scheduler *scheduler = initScheduler();
+
+    // Process *process = initProcess("pedro", 12, 1, 1, 1, 1);
+    // Process *process2 = initProcess("guilherme", 12, 1, 1, 2, 1);
+    // Process *process3 = initProcess("luca", 12, 1, 2, 4, 1);
+    // Process *process4 = initProcess("henrique", 12, 1, 1, 6, 3);
+    // Process *process5 = initProcess("wertyu", 12, 1, 1, 5, 1);
+    // Process *process6 = initProcess("asdf", 12, 1, 4, 5, 5);
+
+    // Process **arrayOfProcesses = malloc(6 * sizeof(Process *));
+    // arrayOfProcesses[0] = process;
+    // arrayOfProcesses[1] = process2;
+    // arrayOfProcesses[2] = process3;
+    // arrayOfProcesses[3] = process4;
+    // arrayOfProcesses[4] = process5;
+    // arrayOfProcesses[5] = process6;
+
+    // addProcesses(scheduler, arrayOfProcesses, 6);
 
     return 0;
 }

@@ -1,3 +1,6 @@
+#ifndef READYQUEUE_H
+#define READYQUEUE_H
+
 #include "Process.h"
 
 typedef struct Node
@@ -15,3 +18,5 @@ typedef struct ReadyQueue
 void addReadyProcess(ReadyQueue *queue, Process *process);
 
 Process *dequeReadyProcess(ReadyQueue *queue);
+
+#endif READYQUEUE_H

@@ -33,16 +33,40 @@ void addProcesses(Scheduler *scheduler, Process **arrayOfProcesses, int arrayCou
 void timerInterrupt(Scheduler *scheduler)
 {
     scheduler->currentMs++;
-    // checkIfEnded(scheduler)
+    if (isDone(scheduler)) {
+        // Lidar com isso
+    }
+    unblockProcesses(scheduler);
+
+    printf("rodei\n");
+
+    if (scheduler->running != NULL) {
+        scheduler->running->credits--;
+        scheduler->running->currentBurst--;
+        scheduler->running->leftCPUms--;
+    }
+    
+    if (scheduler->running != NULL || scheduler->running->credits == 0 || scheduler->running->currentBurst == 0 || scheduler->running->leftCPUms == 0) {
+        if (scheduler->running == NULL) { // Não existia running
+
+        } else if (scheduler->running->leftCPUms == 0) {
+            scheduler->exited = scheduler->running;
+            scheduler->running = NULL;
+        } else if (scheduler->running->currentBurst == NULL) { // Hora de fazer IO
+
+        } else if (scheduler->running->credits == 0) { // Creditos acabaram, hora de trocar
+
+        }
+    }
 }
 
 void unblockProcesses(Scheduler *scheduler)
 {
-    Process *processUnblocked = dequeBlockedProcess(scheduler->blockedQueue, scheduler->currentMs);
+    Process *processUnblocked = dequeueBlockedProcess(scheduler->blockedQueue, scheduler->currentMs);
     while (processUnblocked != NULL)
     {
         addReadyProcess(scheduler->readyQueue, processUnblocked);
-        processUnblocked = dequeBlockedProcess(scheduler->blockedQueue, scheduler->currentMs);
+        processUnblocked = dequeueBlockedProcess(scheduler->blockedQueue, scheduler->currentMs);
     }
 }
 

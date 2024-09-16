@@ -46,7 +46,7 @@ void addBlockedProcess(BlockedQueue *queue, Process *process, unsigned int msToB
     return;
 }
 
-Process *dequeBlockedProcess(BlockedQueue *queue, unsigned int currentMS)
+Process *dequeueBlockedProcess(BlockedQueue *queue, unsigned int currentMS)
 {
     unsigned int position = currentMS & (BLOCKED_QUEUE_SIZE-1);
 
@@ -61,6 +61,7 @@ Process *dequeBlockedProcess(BlockedQueue *queue, unsigned int currentMS)
         Process *response = nodeAtPosition->process;
         free(nodeAtPosition);
         queue->size--;
+        response->currentBurst = response->burstMs;
         return response;
     }
 
@@ -74,6 +75,7 @@ Process *dequeBlockedProcess(BlockedQueue *queue, unsigned int currentMS)
             nodeAtPosition->next = correctNode->next;
             free(correctNode);
             queue->size--;
+            response->currentBurst = response->burstMs;
             return response;
         }
         nodeAtPosition = nodeAtPosition->next;

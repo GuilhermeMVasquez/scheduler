@@ -7,12 +7,19 @@
 #include "ReadyQueue.h"
 #include "Scheduler.h"
 
+Scheduler *scheduler;
+
+void schedulerTimeInterruption(int signal)
+{
+    timerInterrupt(scheduler);
+}
+
 int main()
 {
     struct sigaction sa;
     struct itimerval timer;
 
-    Scheduler *scheduler = initScheduler();
+    scheduler = initScheduler();
 
     Process **arrayOfProcesses = malloc(4 * sizeof(Process *));
     arrayOfProcesses[0] = initProcess("A", 2, 5, 6, 1, 3);
@@ -22,7 +29,7 @@ int main()
 
     addProcesses(scheduler, arrayOfProcesses, 4);
 
-    sa.sa_handler = &timerInterrupt;
+    sa.sa_handler = &schedulerTimeInterruption;
     sa.sa_flags = SA_RESTART;
     sigaction(SIGALRM, &sa, NULL);
 

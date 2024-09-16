@@ -32,7 +32,7 @@ Caso retorne NULL, não há processos no MS informado.
 Caso retorne um processo, pode ainda haver outro processo no mesmo MS,
 sendo correto mais uma vez a função.
 */
-Process *dequeBlockedProcess(BlockedQueue *queue, unsigned int currentMS);
+Process *dequeueBlockedProcess(BlockedQueue *queue, unsigned int currentMS);
 
 /*
 Recalcula os créditos de todos os processos dentro dessa estrutura.

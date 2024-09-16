@@ -23,7 +23,7 @@ BlockedQueue *initBlockedQueue()
 void addBlockedProcess(BlockedQueue *queue, Process *process, unsigned int msToBeRemoved)
 {
     queue->size++;
-    unsigned int position = msToBeRemoved & BLOCKED_QUEUE_SIZE-1;
+    unsigned int position = msToBeRemoved & (BLOCKED_QUEUE_SIZE-1);
 
     BQInnerLinkedList *newNode = (BQInnerLinkedList *) malloc(sizeof(BQInnerLinkedList));
     newNode->key = msToBeRemoved;
@@ -48,7 +48,7 @@ void addBlockedProcess(BlockedQueue *queue, Process *process, unsigned int msToB
 
 Process *dequeBlockedProcess(BlockedQueue *queue, unsigned int currentMS)
 {
-    unsigned int position = currentMS & BLOCKED_QUEUE_SIZE-1;
+    unsigned int position = currentMS & (BLOCKED_QUEUE_SIZE-1);
 
     BQInnerLinkedList *nodeAtPosition = queue->keys[position];
 
@@ -76,6 +76,7 @@ Process *dequeBlockedProcess(BlockedQueue *queue, unsigned int currentMS)
             queue->size--;
             return response;
         }
+        nodeAtPosition = nodeAtPosition->next;
     }
     
     return NULL;

@@ -28,6 +28,12 @@ void addProcesses(Scheduler *scheduler, Process **arrayOfProcesses, int arrayCou
     }
 }
 
+void timerInterrupt(Scheduler *scheduler)
+{
+    scheduler->currentMs++;
+    // checkIfEnded(scheduler)
+}
+
 void unblockProcesses(Scheduler *scheduler)
 {
     Process *processUnblocked = dequeBlockedProcess(scheduler->blockedQueue, scheduler->currentMs);

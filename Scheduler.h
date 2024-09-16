@@ -19,7 +19,7 @@ Scheduler *initScheduler();
 
 void addProcesses(Scheduler *scheduler, Process **arrayOfProcesses, int arrayCount);
 
-void timerInterrupt();
+void timerInterrupt(Scheduler *scheduler);
 
 void unblockProcesses(Scheduler *scheduler);
 

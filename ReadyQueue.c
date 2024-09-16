@@ -63,17 +63,7 @@ int isZeroCredits(ReadyQueue *queue)
         return 1;
     }
 
-    Node *current = queue->head;
-    while (current != NULL)
-    {
-        if (current->process->credits != 0)
-        {
-            return 0;
-        }
-        current = current->next;
-    }
-
-    return 1;
+    return queue->head->process->credits == 0;
 }
 
 ReadyQueue *setNewCredits(ReadyQueue *queue)

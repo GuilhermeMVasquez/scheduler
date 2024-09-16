@@ -39,6 +39,6 @@ Recalcula os créditos de todos os processos dentro dessa estrutura.
 É uma função um pouco cara, tendo em vista que itera sobre todas posições do array interno.
 No entanto, como é chamda poucas vezes, a estrutura ainda vale a pena.
 */
-void recalculateCredits(BlockedQueue *queue);
+void recalculateCreditsFromBlockeds(BlockedQueue *queue);
 
 #endif // BLOCKEDQUEUE_H

@@ -81,7 +81,7 @@ Process *dequeBlockedProcess(BlockedQueue *queue, unsigned int currentMS)
     return NULL;
 }
 
-void recalculateCredits(BlockedQueue *queue)
+void recalculateCreditsFromBlockeds(BlockedQueue *queue)
 {
     for (unsigned int i = 0; i < BLOCKED_QUEUE_SIZE; i++)
     {

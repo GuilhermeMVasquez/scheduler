@@ -27,3 +27,23 @@ void addProcesses(Scheduler *scheduler, Process **arrayOfProcesses, int arrayCou
         addReadyProcess(scheduler->readyQueue, arrayOfProcesses[i]);
     }
 }
+
+void unblockProcesses(Scheduler *scheduler)
+{
+    Process *processUnblocked = dequeBlockedProcess(scheduler->blockedQueue, scheduler->currentMs);
+    while (processUnblocked != NULL)
+    {
+        addReadyProcess(scheduler->readyQueue, processUnblocked);
+        Process *processUnblocked = dequeBlockedProcess(scheduler->blockedQueue, scheduler->currentMs);
+    }
+}
+
+void recalculateCredits(Scheduler *scheduler)
+{
+    recalculateCreditsFromBlockeds(scheduler->blockedQueue);
+    setNewCredits(scheduler->readyQueue);
+    if (scheduler->running != NULL) {
+        scheduler->running->credits >>= 2;
+        scheduler->running->credits += scheduler->running->priority;
+    }
+}

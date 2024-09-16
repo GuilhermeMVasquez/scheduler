@@ -43,6 +43,7 @@ int main()
 
     while (!isDone(scheduler))
     {
+        printf("rr\n");
     }
 
     return 0;

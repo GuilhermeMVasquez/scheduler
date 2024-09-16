@@ -33,28 +33,26 @@ void addProcesses(Scheduler *scheduler, Process **arrayOfProcesses, int arrayCou
 void timerInterrupt(Scheduler *scheduler)
 {
     scheduler->currentMs++;
-    if (isDone(scheduler)) {
-        // Lidar com isso
-    }
+    
     unblockProcesses(scheduler);
 
-    printf("rodei\n");
+    Process *running = scheduler->running;
 
-    if (scheduler->running != NULL) {
-        scheduler->running->credits--;
-        scheduler->running->currentBurst--;
-        scheduler->running->leftCPUms--;
+    if (running != NULL) {
+        running->credits--;
+        running->currentBurst--;
+        running->leftCPUms--;
     }
     
-    if (scheduler->running != NULL || scheduler->running->credits == 0 || scheduler->running->currentBurst == 0 || scheduler->running->leftCPUms == 0) {
-        if (scheduler->running == NULL) { // Não existia running
+    if (running == NULL || running->credits == 0 || running->currentBurst == 0 || running->leftCPUms == 0) {
+        if (running == NULL) { // Não existia running
 
-        } else if (scheduler->running->leftCPUms == 0) {
-            scheduler->exited = scheduler->running;
+        } else if (running->leftCPUms == 0) {
+            scheduler->exited = running;
             scheduler->running = NULL;
-        } else if (scheduler->running->currentBurst == NULL) { // Hora de fazer IO
+        } else if (running->currentBurst == 0) { // Hora de fazer IO
 
-        } else if (scheduler->running->credits == 0) { // Creditos acabaram, hora de trocar
+        } else if (running->credits == 0) { // Creditos acabaram, hora de trocar
 
         }
     }

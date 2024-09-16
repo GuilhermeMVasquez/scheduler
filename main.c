@@ -6,12 +6,16 @@
 
 unsigned int on = 0;
 
+void print_hey(int signum) {
+    printf("Hey! %d\n", signum);
+}
+
 int main()
 {
     struct sigaction sa;
     struct itimerval timer;
 
-    // sa.sa_handler = &PLACEHOLDER; passar o ponteiro da função que será chamada
+    sa.sa_handler = &print_hey;
     sa.sa_flags = SA_RESTART;
     sigaction(SIGALRM, &sa, NULL);
 
@@ -30,7 +34,9 @@ int main()
     while (on)
     {
         i += 1;
-        printf("%d\n", i);
+        if (i % 1000000 == 0) {
+            printf("%d\n", i);
+        }
     }
 
     // just to test de blockedQueue

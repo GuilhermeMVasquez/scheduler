@@ -58,7 +58,9 @@ Process *dequeBlockedProcess(BlockedQueue *queue, unsigned int currentMS)
 
     if (nodeAtPosition->key == currentMS) { // se o primeiro nodo já for da chave certa
         queue->keys[position] = nodeAtPosition->next;
-        return nodeAtPosition->process;
+        Process *response = nodeAtPosition->process;
+        free(nodeAtPosition);
+        return response;
     }
 
     // Caso o primeiro nodo não seja da chave certa,
@@ -66,8 +68,10 @@ Process *dequeBlockedProcess(BlockedQueue *queue, unsigned int currentMS)
     while (nodeAtPosition->next != NULL)
     {
         if (nodeAtPosition->next->key == currentMS) {
-            BQInnerLinkedList *response = nodeAtPosition->next->process;
-            nodeAtPosition->next = nodeAtPosition->next->next;
+            BQInnerLinkedList *correctNode = nodeAtPosition->next;
+            Process *response = correctNode->process;
+            nodeAtPosition->next = correctNode->next;
+            free(correctNode);
             return response;
         }
     }

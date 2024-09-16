@@ -63,13 +63,18 @@ int main()
     // just to test de blockedQueue
     // BlockedQueue *queue = initBlockedQueue();
 
-    // Process *process = initProcess("hello",12,1,1,1,1);
-    // Process *process2 = initProcess("hello2",12,1,1,1,1);
+    // Process *process = initProcess("hello",12,1,1,1,10);
+    // Process *process2 = initProcess("hello2",12,1,1,1,11);
     // addBlockedProcess(queue,process, 4);
     // addBlockedProcess(queue,process2, 6);
 
-    // printf("%s\n", dequeBlockedProcess(queue, 6)->name);
-    // printf("%s\n", dequeBlockedProcess(queue, 6));
+    // printf("%u\n", dequeBlockedProcess(queue, 6)->credits);
+
+    // addBlockedProcess(queue,process2, 6);
+
+    // recalculateCredits(queue);
+
+    // printf("%u\n", dequeBlockedProcess(queue, 6)->credits);
 
     return 0;
 }

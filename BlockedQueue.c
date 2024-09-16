@@ -23,7 +23,7 @@ BlockedQueue *initBlockedQueue()
 void addBlockedProcess(BlockedQueue *queue, Process *process, unsigned int msToBeRemoved)
 {
     queue->size++;
-    unsigned int position = msToBeRemoved & BLOCKED_QUEUE_SIZE;
+    unsigned int position = msToBeRemoved & BLOCKED_QUEUE_SIZE-1;
 
     BQInnerLinkedList *newNode = (BQInnerLinkedList *) malloc(sizeof(BQInnerLinkedList));
     newNode->key = msToBeRemoved;
@@ -48,7 +48,7 @@ void addBlockedProcess(BlockedQueue *queue, Process *process, unsigned int msToB
 
 Process *dequeBlockedProcess(BlockedQueue *queue, unsigned int currentMS)
 {
-    unsigned int position = currentMS & BLOCKED_QUEUE_SIZE;
+    unsigned int position = currentMS & BLOCKED_QUEUE_SIZE-1;
 
     BQInnerLinkedList *nodeAtPosition = queue->keys[position];
 
@@ -79,4 +79,18 @@ Process *dequeBlockedProcess(BlockedQueue *queue, unsigned int currentMS)
     }
     
     return NULL;
+}
+
+void recalculateCredits(BlockedQueue *queue)
+{
+    for (unsigned int i = 0; i < BLOCKED_QUEUE_SIZE; i++)
+    {
+        BQInnerLinkedList *node = queue->keys[i];
+        while (node != NULL)
+        {
+            node->process->credits >>= 1;
+            node->process->credits += node->process->priority;
+            node = node->next;
+        }
+    }
 }

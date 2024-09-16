@@ -3,8 +3,8 @@
 
 #include "Process.h"
 
-// IMPORTANT: SIZES MUST BE = (A POWER OF 2)-1
-#define BLOCKED_QUEUE_SIZE 255
+// IMPORTANT: SIZES MUST BE A POWER OF 2
+#define BLOCKED_QUEUE_SIZE 256
 
 typedef struct BlockedQueueInnerLinkedList BQInnerLinkedList;
 
@@ -33,5 +33,12 @@ Caso retorne um processo, pode ainda haver outro processo no mesmo MS,
 sendo correto mais uma vez a função.
 */
 Process *dequeBlockedProcess(BlockedQueue *queue, unsigned int currentMS);
+
+/*
+Recalcula os créditos de todos os processos dentro dessa estrutura.
+É uma função um pouco cara, tendo em vista que itera sobre todas posições do array interno.
+No entanto, como é chamda poucas vezes, a estrutura ainda vale a pena.
+*/
+void recalculateCredits(BlockedQueue *queue);
 
 #endif // BLOCKEDQUEUE_H

@@ -3,7 +3,7 @@ CC = gcc
 CFLAGS = -Wall -g
 
 # Source files
-SRCS = Process.c SchedulerQueue.c BlockedQueue.c Scheduler.c ReadyQueue.c main.c
+SRCS = Process.c BlockedQueue.c Scheduler.c ReadyQueue.c main.c
 
 # Object files (replace .c with .o)
 OBJS = $(SRCS:.c=.o)

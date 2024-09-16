@@ -7,19 +7,22 @@
 #include "ReadyQueue.h"
 #include "Scheduler.h"
 
-unsigned int on = 0;
-
-void print_hey(int signum)
-{
-    printf("Hey! %d\n", signum);
-}
-
 int main()
 {
     struct sigaction sa;
     struct itimerval timer;
 
-    sa.sa_handler = &print_hey;
+    Scheduler *scheduler = initScheduler();
+
+    Process **arrayOfProcesses = malloc(4 * sizeof(Process *));
+    arrayOfProcesses[0] = initProcess("A", 2, 5, 6, 1, 3);
+    arrayOfProcesses[1] = initProcess("B", 3, 10, 6, 2, 3);
+    arrayOfProcesses[2] = initProcess("C", 0, 0, 14, 3, 3);
+    arrayOfProcesses[3] = initProcess("D", 0, 0, 10, 4, 3);
+
+    addProcesses(scheduler, arrayOfProcesses, 4);
+
+    sa.sa_handler = &timerInterrupt;
     sa.sa_flags = SA_RESTART;
     sigaction(SIGALRM, &sa, NULL);
 
@@ -31,72 +34,9 @@ int main()
 
     setitimer(ITIMER_REAL, &timer, NULL);
 
-    on = 1;
-
-    int i = 0;
-
-    while (on)
+    while (!isDone(scheduler))
     {
-        i += 1;
-        if (i % 1000000 == 0)
-        {
-            printf("%d\n", i);
-        }
     }
-
-    // Testando qyeye
-
-    // ReadyQueue *queue = initReadyQueue();
-    // Process *process = initProcess("pedro", 12, 1, 1, 1, 1);
-    // Process *process2 = initProcess("guilherme", 12, 1, 1, 2, 1);
-    // Process *process3 = initProcess("luca", 12, 1, 2, 4, 1);
-    // Process *process4 = initProcess("henrique", 12, 1, 1, 6, 3);
-    // Process *process5 = initProcess("wertyu", 12, 1, 1, 5, 1);
-    // Process *process6 = initProcess("asdf", 12, 1, 4, 5, 5);
-    // addReadyProcess(queue, process);
-    // addReadyProcess(queue, process2);
-    // addReadyProcess(queue, process3);
-    // addReadyProcess(queue, process4);
-    // addReadyProcess(queue, process5);
-    // addReadyProcess(queue, process6);
-
-    // printReadyQueue(queue);
-
-    // just to test de blockedQueue
-    // BlockedQueue *queue = initBlockedQueue();
-
-    // Process *process = initProcess("hello",12,1,1,1,10);
-    // Process *process2 = initProcess("hello2",12,1,1,1,11);
-    // addBlockedProcess(queue,process, 4);
-    // addBlockedProcess(queue,process2, 6);
-
-    // printf("%u\n", dequeBlockedProcess(queue, 6)->credits);
-
-    // addBlockedProcess(queue,process2, 6);
-
-    // recalculateCredits(queue);
-
-    // printf("%u\n", dequeBlockedProcess(queue, 6)->credits);
-
-    // Teste Scheduler
-    // Scheduler *scheduler = initScheduler();
-
-    // Process *process = initProcess("pedro", 12, 1, 1, 1, 1);
-    // Process *process2 = initProcess("guilherme", 12, 1, 1, 2, 1);
-    // Process *process3 = initProcess("luca", 12, 1, 2, 4, 1);
-    // Process *process4 = initProcess("henrique", 12, 1, 1, 6, 3);
-    // Process *process5 = initProcess("wertyu", 12, 1, 1, 5, 1);
-    // Process *process6 = initProcess("asdf", 12, 1, 4, 5, 5);
-
-    // Process **arrayOfProcesses = malloc(6 * sizeof(Process *));
-    // arrayOfProcesses[0] = process;
-    // arrayOfProcesses[1] = process2;
-    // arrayOfProcesses[2] = process3;
-    // arrayOfProcesses[3] = process4;
-    // arrayOfProcesses[4] = process5;
-    // arrayOfProcesses[5] = process6;
-
-    // addProcesses(scheduler, arrayOfProcesses, 6);
 
     return 0;
 }

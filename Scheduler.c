@@ -7,7 +7,8 @@ Scheduler *initScheduler()
 {
     Scheduler *scheduler = (Scheduler *)calloc(1, sizeof(Scheduler));
 
-    if( scheduler == NULL) {
+    if (scheduler == NULL)
+    {
         printf("Failed to allocate memory for Scheduler.\n");
         return NULL;
     }
@@ -23,7 +24,8 @@ Scheduler *initScheduler()
 
 void addProcesses(Scheduler *scheduler, Process **arrayOfProcesses, int arrayCount)
 {
-    for (int i = 0; i < arrayCount; i++) {
+    for (int i = 0; i < arrayCount; i++)
+    {
         addReadyProcess(scheduler->readyQueue, arrayOfProcesses[i]);
     }
 }
@@ -40,7 +42,7 @@ void unblockProcesses(Scheduler *scheduler)
     while (processUnblocked != NULL)
     {
         addReadyProcess(scheduler->readyQueue, processUnblocked);
-        Process *processUnblocked = dequeBlockedProcess(scheduler->blockedQueue, scheduler->currentMs);
+        processUnblocked = dequeBlockedProcess(scheduler->blockedQueue, scheduler->currentMs);
     }
 }
 
@@ -48,8 +50,14 @@ void recalculateCredits(Scheduler *scheduler)
 {
     recalculateCreditsFromBlockeds(scheduler->blockedQueue);
     setNewCredits(scheduler->readyQueue);
-    if (scheduler->running != NULL) {
+    if (scheduler->running != NULL)
+    {
         scheduler->running->credits >>= 2;
         scheduler->running->credits += scheduler->running->priority;
     }
+}
+
+int isDone(Scheduler *scheduler)
+{
+    return scheduler->readyQueue->size == 0 && scheduler->blockedQueue->size == 0 && scheduler->running == NULL;
 }

@@ -3,10 +3,12 @@
 #include <signal.h>
 #include <sys/time.h>
 #include "BlockedQueue.h"
+#include "ReadyQueue.h"
 
 unsigned int on = 0;
 
-void print_hey(int signum) {
+void print_hey(int signum)
+{
     printf("Hey! %d\n", signum);
 }
 
@@ -34,10 +36,29 @@ int main()
     while (on)
     {
         i += 1;
-        if (i % 1000000 == 0) {
+        if (i % 1000000 == 0)
+        {
             printf("%d\n", i);
         }
     }
+
+    // Testando qyeye
+
+    // ReadyQueue *queue = initReadyQueue();
+    // Process *process = initProcess("pedro", 12, 1, 1, 1, 1);
+    // Process *process2 = initProcess("guilherme", 12, 1, 1, 2, 1);
+    // Process *process3 = initProcess("luca", 12, 1, 2, 4, 1);
+    // Process *process4 = initProcess("henrique", 12, 1, 1, 6, 3);
+    // Process *process5 = initProcess("wertyu", 12, 1, 1, 5, 1);
+    // Process *process6 = initProcess("asdf", 12, 1, 4, 5, 5);
+    // addReadyProcess(queue, process);
+    // addReadyProcess(queue, process2);
+    // addReadyProcess(queue, process3);
+    // addReadyProcess(queue, process4);
+    // addReadyProcess(queue, process5);
+    // addReadyProcess(queue, process6);
+
+    // printReadyQueue(queue);
 
     // just to test de blockedQueue
     // BlockedQueue *queue = initBlockedQueue();

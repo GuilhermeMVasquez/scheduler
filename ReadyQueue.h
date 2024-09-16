@@ -15,8 +15,12 @@ typedef struct ReadyQueue
     unsigned int size;
 } ReadyQueue;
 
+ReadyQueue *initReadyQueue();
+
 void addReadyProcess(ReadyQueue *queue, Process *process);
 
 Process *dequeReadyProcess(ReadyQueue *queue);
 
-#endif READYQUEUE_H
+void printReadyQueue(ReadyQueue *queue);
+
+#endif // READYQUEUE_H

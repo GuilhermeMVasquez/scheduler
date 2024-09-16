@@ -2,70 +2,75 @@
 #include <stdlib.h>
 #include "BlockedQueue.h"
 
+/*
+IMPORTANT: The current implementation uses a HashMap, in which the 
+hash is just using the unsigned integer itself. This is fine since time 
+will always increase, so not many collisions are expected.
+*/
 
+BlockedQueue *initBlockedQueue()
+{ 
+    BlockedQueue *queue = (BlockedQueue *)calloc(1, sizeof(BlockedQueue));
 
-BlockedQueue *initBlockedQueue( unsigned int capacity ) { 
-
-    BlockedQueue *queue = (BlockedQueue *)malloc(sizeof(BlockedQueue));
-    // casenffor some reason the malloc fail
-    if( queue == NULL ) {
+    if( queue == NULL) {
         fprintf(stderr, "Failed to allocate memory for BlockedQueue.\n");
         return NULL;
     }
 
-    queue->capacity = capacity;
-    queue->size = 0;
     return queue;
 }
 
-int addBlockedProcess( BlockedQueue *queue, Process *process ) {
+void addBlockedProcess(BlockedQueue *queue, Process *process, unsigned int msToBeRemoved)
+{
+    unsigned int position = msToBeRemoved & BLOCKED_QUEUE_SIZE;
 
-    if( queue->size == queue->capacity )  
-        return -1;
+    BQInnerLinkedList *newNode = (BQInnerLinkedList *) malloc(sizeof(BQInnerLinkedList));
+    newNode->key = msToBeRemoved;
+    newNode->next = NULL;
+    newNode->process = process;
 
-    if(queue->processes == NULL) 
-        queue->processes = ( Process** )malloc(queue->capacity * sizeof(Process *));
-    
-    queue->processes[queue->size++] = process;
-    if( queue->processes == NULL ) // case the malloc fail
-        return -1;
+    BQInnerLinkedList *nodeAtPosition = queue->keys[position];
 
-    return 0;
-
-}
-
-
-Process *removeBlockedProcess( BlockedQueue *queue ) {
-
-
-    if(queue->size == 0)
-        return NULL;
-
-    Process *process = queue->processes[0];
-
-    for( unsigned int i = 1; i < queue->size; i++ ) {
-        queue->processes[i - 1] = queue->processes[i];
-    }
-
-    queue->size--;
-
-    return process;
-}
-
-// Need to verify if the use of free is correct.
-void freeBlockedQueue( BlockedQueue *queue ) {
-
-    if( queue->size == 0 )
+    if (nodeAtPosition == NULL) { // Simplemente insere o nodo na posição
+        queue->keys[position] = newNode;
         return;
-    
-    if( queue->processes != NULL ) {
-        for( unsigned int i = 0; i < queue->size; i++ ) {
-            free(queue->processes[i]);
-        }
-
-        free(queue->processes);
     }
-        
-    free( queue );
+
+    while (nodeAtPosition->next != NULL) // Caminha até o próximo nodo não existir
+    {
+        nodeAtPosition = nodeAtPosition->next;
+    }
+
+    nodeAtPosition->next = newNode;
+    return;
 }
 
+Process *dequeBlockedProcess(BlockedQueue *queue, unsigned int currentMS)
+{
+    unsigned int position = currentMS & BLOCKED_QUEUE_SIZE;
+
+    BQInnerLinkedList *nodeAtPosition = queue->keys[position];
+
+
+    if (nodeAtPosition == NULL) { // Verifica se é nulo
+        return NULL;
+    }
+
+    if (nodeAtPosition->key == currentMS) { // se o primeiro nodo já for da chave certa
+        queue->keys[position] = nodeAtPosition->next;
+        return nodeAtPosition->process;
+    }
+
+    // Caso o primeiro nodo não seja da chave certa,
+    // Busca o nodo com a chave certa
+    while (nodeAtPosition->next != NULL)
+    {
+        if (nodeAtPosition->next->key == currentMS) {
+            BQInnerLinkedList *response = nodeAtPosition->next->process;
+            nodeAtPosition->next = nodeAtPosition->next->next;
+            return response;
+        }
+    }
+    
+    return NULL;
+}

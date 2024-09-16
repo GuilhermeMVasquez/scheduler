@@ -18,9 +18,6 @@ typedef struct Process {
     unsigned int credits;
 } Process;
 
-/*
-Instancia um processo já malocado
-*/
 Process *initProcess(char *name, 
                      unsigned int burstMS, 
                      unsigned int ioMs,

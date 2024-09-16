@@ -25,27 +25,24 @@ int main()
 
     on = 1;
 
+    int i = 0;
+
     while (on)
     {
-        // estabelecer validacao para encerrar o loop
+        i += 1;
+        printf("%d\n", i);
     }
 
-
-    //just to test de blockedQueue
-    // BlockedQueue *queue = initBlockedQueue(3);
+    // just to test de blockedQueue
+    // BlockedQueue *queue = initBlockedQueue();
 
     // Process *process = initProcess("hello",12,1,1,1,1);
     // Process *process2 = initProcess("hello2",12,1,1,1,1);
-    // addBlockedProcess(queue,process);
-    // addBlockedProcess(queue,process2);
+    // addBlockedProcess(queue,process, 4);
+    // addBlockedProcess(queue,process2, 6);
 
-    // printf("%s\n", queue->processes[0]->name);
-    // printf("%s\n", queue->processes[1]->name);
-
-
-    // removeBlockedProcess(queue);
-    // freeBlockedQueue(queue);
-
+    // printf("%s\n", dequeBlockedProcess(queue, 6)->name);
+    // printf("%s\n", dequeBlockedProcess(queue, 6));
 
     return 0;
 }

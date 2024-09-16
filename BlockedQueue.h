@@ -3,42 +3,34 @@
 
 #include "Process.h"
 
+// IMPORTANT: SIZES MUST BE = (A POWER OF 2)-1
+#define BLOCKED_QUEUE_SIZE 255
+
+typedef struct BlockedQueueInnerLinkedList BQInnerLinkedList;
+
+struct BlockedQueueInnerLinkedList {
+    BQInnerLinkedList *next; // Next element in the linked list
+    Process *process;        // Pointer to the blocked process
+    unsigned int key;        // The key (time in ms to be released by IO)
+};
+
 typedef struct BlockedQueue {
-    Process **processes;  // Array of processes that are blocked (waiting for I/O)
-    unsigned int size;    // Number of processes in the blocked queue
-    unsigned int capacity; // Capacity of the blocked queue
+    BQInnerLinkedList *keys[BLOCKED_QUEUE_SIZE];  // Array of processes that are blocked (waiting for I/O)
 } BlockedQueue;
 
-/**
- * @brief Initialize a BlockedQueue structure.
- * 
- * @param capacity The maximum number of blocked processes that can be in the queue.
- * @return BlockedQueue* Pointer to the newly allocated BlockedQueue structure.
- */
-BlockedQueue *initBlockedQueue(unsigned int capacity);
+BlockedQueue *initBlockedQueue();
 
-/**
- * @brief Add a process to the blocked queue.
- * 
- * @param queue The BlockedQueue to which the process will be added.
- * @param process The process to add (process waiting for I/O).
- * @return int 0 on success, -1 on failure (e.g., if queue is full).
- */
-int addBlockedProcess(BlockedQueue *queue, Process *process);
+/*
+Adiciona um processo na fila de bloqueados
+*/
+void addBlockedProcess(BlockedQueue *queue, Process *process, unsigned int msToBeRemoved);
 
-/**
- * @brief Remove a process from the blocked queue.
- * 
- * @param queue The BlockedQueue from which to remove a process.
- * @return Process* Pointer to the removed process, or NULL if the queue is empty.
- */
-Process *removeBlockedProcess(BlockedQueue *queue);
-
-/**
- * @brief Free the memory allocated for the BlockedQueue.
- * 
- * @param queue The BlockedQueue to be freed.
- */
-void freeBlockedQueue(BlockedQueue *queue);
+/*
+Tenta retirar um processo para um dado milissegundo(ms) atual.
+Caso retorne NULL, não há processos no MS informado.
+Caso retorne um processo, pode ainda haver outro processo no mesmo MS,
+sendo correto mais uma vez a função.
+*/
+Process *dequeBlockedProcess(BlockedQueue *queue, unsigned int currentMS);
 
 #endif // BLOCKEDQUEUE_H

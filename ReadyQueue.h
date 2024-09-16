@@ -21,6 +21,10 @@ void addReadyProcess(ReadyQueue *queue, Process *process);
 
 Process *dequeReadyProcess(ReadyQueue *queue);
 
+int isZeroCredits(ReadyQueue *queue);
+
+ReadyQueue *setNewCredits(ReadyQueue *queue);
+
 void printReadyQueue(ReadyQueue *queue);
 
 #endif // READYQUEUE_H

@@ -21,7 +21,7 @@ void addReadyProcess(ReadyQueue *queue, Process *process)
     newNode->process = process;
     newNode->next = NULL;
 
-    if (queue->head == NULL || queue->head->process->priority < process->priority || (queue->head->process->priority == process->priority && queue->head->process->order < process->order))
+    if (queue->head == NULL || queue->head->process->credits < process->credits || (queue->head->process->credits == process->credits && queue->head->process->order < process->order))
     {
         newNode->next = queue->head;
         queue->head = newNode;
@@ -30,7 +30,7 @@ void addReadyProcess(ReadyQueue *queue, Process *process)
     }
 
     Node *current = queue->head;
-    while (current->next != NULL && (current->next->process->priority > process->priority || (current->next->process->priority == process->priority && current->next->process->order > process->order)))
+    while (current->next != NULL && (current->next->process->credits > process->credits || (current->next->process->credits == process->credits && current->next->process->order > process->order)))
     {
         current = current->next;
     }
@@ -56,6 +56,48 @@ Process *dequeReadyProcess(ReadyQueue *queue)
     return process;
 }
 
+int isZeroCredits(ReadyQueue *queue)
+{
+    if (queue->head == NULL)
+    {
+        return 1;
+    }
+
+    Node *current = queue->head;
+    while (current != NULL)
+    {
+        if (current->process->credits != 0)
+        {
+            return 0;
+        }
+        current = current->next;
+    }
+
+    return 1;
+}
+
+ReadyQueue *setNewCredits(ReadyQueue *queue)
+{
+    if (queue->head == NULL)
+    {
+        return queue;
+    }
+
+    ReadyQueue *newQueue = initReadyQueue();
+    Node *current = queue->head;
+    while (current != NULL)
+    {
+        current->process->credits = current->process->credits / 2 + current->process->priority;
+        addReadyProcess(newQueue, current->process);
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+
+    free(queue);
+    return newQueue;
+}
+
 void printReadyQueue(ReadyQueue *queue)
 {
     if (queue->head == NULL)
@@ -67,7 +109,7 @@ void printReadyQueue(ReadyQueue *queue)
     Node *current = queue->head;
     while (current != NULL)
     {
-        printf("Process ID: %s, Priority: %d, Order: %d\n", current->process->name, current->process->priority, current->process->order);
+        printf("Process ID: %s, credits: %d, Order: %d\n", current->process->name, current->process->credits, current->process->order);
         current = current->next;
     }
 }

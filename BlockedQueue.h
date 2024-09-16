@@ -16,6 +16,7 @@ struct BlockedQueueInnerLinkedList {
 
 typedef struct BlockedQueue {
     BQInnerLinkedList *keys[BLOCKED_QUEUE_SIZE];  // Array of processes that are blocked (waiting for I/O)
+    unsigned int size;                            // Amount of processes inside the structure
 } BlockedQueue;
 
 BlockedQueue *initBlockedQueue();

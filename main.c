@@ -34,10 +34,10 @@ int main()
     sigaction(SIGALRM, &sa, NULL);
 
     timer.it_value.tv_sec = 0;
-    timer.it_value.tv_usec = 10000;
+    timer.it_value.tv_usec = 1000;
 
     timer.it_interval.tv_sec = 0;
-    timer.it_interval.tv_usec = 10000;
+    timer.it_interval.tv_usec = 1000;
 
     setitimer(ITIMER_REAL, &timer, NULL);
 

@@ -153,5 +153,6 @@ void printScheduler(Scheduler *scheduler)
     {
         printf("Exited:\n");
         printf("Process ID: %s, Credits: %d, Turnaround time: %d\n", scheduler->exited->name, scheduler->exited->credits, scheduler->currentMs - scheduler->exited->enterTime);
+        scheduler->exited = NULL;
     }
 }

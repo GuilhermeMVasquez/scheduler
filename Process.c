@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
-typedef struct Process {
+typedef struct Process
+{
     char *name;
 
     unsigned int burstMs;
@@ -16,10 +17,13 @@ typedef struct Process {
     unsigned int priority;
 
     unsigned int credits;
+
+    unsigned int hasEntered;
+    unsigned int enterTime;
 } Process;
 
-Process *initProcess(char *name, 
-                     unsigned int burstMS, 
+Process *initProcess(char *name,
+                     unsigned int burstMS,
                      unsigned int ioMs,
                      unsigned int totalCPUms,
                      unsigned int order,
@@ -41,6 +45,9 @@ Process *initProcess(char *name,
     newProcess->priority = priority;
 
     newProcess->credits = priority;
+
+    newProcess->hasEntered = 0;
+    newProcess->enterTime = 0;
 
     return newProcess;
 }

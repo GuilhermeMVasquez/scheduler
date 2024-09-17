@@ -39,6 +39,11 @@ void timerInterrupt(Scheduler *scheduler)
 
     if (running != NULL)
     {
+        if (!running->hasEntered)
+        {
+            running->hasEntered = 1;
+            running->enterTime = scheduler->currentMs;
+        }
         running->credits--;
         if (running->burstMs != 0)
             running->currentBurst--;
@@ -147,6 +152,6 @@ void printScheduler(Scheduler *scheduler)
     if (scheduler->exited != NULL)
     {
         printf("Exited:\n");
-        printf("Process ID: %s, Credits: %d\n", scheduler->exited->name, scheduler->exited->credits);
+        printf("Process ID: %s, Credits: %d, Turnaround time: %d\n", scheduler->exited->name, scheduler->exited->credits, scheduler->currentMs - scheduler->exited->enterTime);
     }
 }

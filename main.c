@@ -43,8 +43,9 @@ int main()
 
     while (!isDone(scheduler))
     {
-        printf("rr\n");
     }
+
+    printf("All processes have finished.\n");
 
     return 0;
 }

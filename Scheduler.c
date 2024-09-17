@@ -33,27 +33,47 @@ void addProcesses(Scheduler *scheduler, Process **arrayOfProcesses, int arrayCou
 void timerInterrupt(Scheduler *scheduler)
 {
     scheduler->currentMs++;
-    
-    unblockProcesses(scheduler);
 
-    Process *running = scheduler->running;
+    if (!isDone(scheduler))
+    {
+        unblockProcesses(scheduler);
 
-    if (running != NULL) {
-        running->credits--;
-        running->currentBurst--;
-        running->leftCPUms--;
-    }
-    
-    if (running == NULL || running->credits == 0 || running->currentBurst == 0 || running->leftCPUms == 0) {
-        if (running == NULL) { // Não existia running
+        Process *running = scheduler->running;
 
-        } else if (running->leftCPUms == 0) {
-            scheduler->exited = running;
-            scheduler->running = NULL;
-        } else if (running->currentBurst == 0) { // Hora de fazer IO
+        if (running != NULL)
+        {
+            running->credits--;
+            running->currentBurst--;
+            running->leftCPUms--;
+        }
 
-        } else if (running->credits == 0) { // Creditos acabaram, hora de trocar
+        if (running == NULL || running->credits == 0 || running->currentBurst == 0 || running->leftCPUms == 0)
+        {
+            if (running != NULL) // Existe running
+            {
+                if (running->leftCPUms == 0) // Processo terminou
+                {
+                    scheduler->exited = running;
+                    scheduler->running = NULL;
+                }
+                else if (running->currentBurst == 0) // Hora de fazer IO
+                {
+                    addBlockedProcess(scheduler->blockedQueue, running, scheduler->currentMs + running->ioMs);
+                    scheduler->running = NULL;
+                }
+                else if (running->credits == 0) // Creditos acabaram, hora de trocar
+                {
+                    addReadyProcess(scheduler->readyQueue, running);
+                    scheduler->running = NULL;
+                }
+            }
 
+            if (isZeroCredits(scheduler->readyQueue)) // Todos os processos tem 0 creditos
+            {
+                recalculateCredits(scheduler);
+            }
+
+            scheduler->running = dequeReadyProcess(scheduler->readyQueue);
         }
     }
 }
@@ -71,10 +91,10 @@ void unblockProcesses(Scheduler *scheduler)
 void recalculateCredits(Scheduler *scheduler)
 {
     recalculateCreditsFromBlockeds(scheduler->blockedQueue);
-    setNewCredits(scheduler->readyQueue);
+    scheduler->readyQueue = setNewCredits(scheduler->readyQueue);
     if (scheduler->running != NULL)
     {
-        scheduler->running->credits >>= 2;
+        scheduler->running->credits >>= 1;
         scheduler->running->credits += scheduler->running->priority;
     }
 }

@@ -60,7 +60,7 @@ int isZeroCredits(ReadyQueue *queue)
 {
     if (queue->head == NULL)
     {
-        return 1;
+        return 0;
     }
 
     return queue->head->process->credits == 0;

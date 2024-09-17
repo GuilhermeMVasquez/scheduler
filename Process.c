@@ -31,7 +31,7 @@ Process *initProcess(char *name,
     newProcess->burstMs = burstMS;
     newProcess->currentBurst = burstMS;
 
-    newProcess->currentIO = ioMs;
+    newProcess->ioMs = ioMs;
     newProcess->currentIO = ioMs;
 
     newProcess->totalCPUms = totalCPUms;

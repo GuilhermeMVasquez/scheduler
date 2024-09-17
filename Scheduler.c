@@ -58,6 +58,15 @@ void timerInterrupt(Scheduler *scheduler)
                 scheduler->exited = running;
                 scheduler->running = NULL;
                 printf("Process %s exited at %dms. [Credits: %d, Current Burst: %d, Left CPU ms: %d]\n", running->name, scheduler->currentMs, running->credits, running->currentBurst, running->leftCPUms);
+                if (isZeroCredits(scheduler->readyQueue))
+                {
+                    recalculateCredits(scheduler);
+                }
+                scheduler->running = dequeReadyProcess(scheduler->readyQueue);
+                if (scheduler->running != NULL)
+                {
+                    printf("Process %s started at %dms. [Credits: %d, Current Burst: %d, Left CPU ms: %d]\n", scheduler->running->name, scheduler->currentMs, scheduler->running->credits, scheduler->running->currentBurst, scheduler->running->leftCPUms);
+                }
             }
             else if ((running->burstMs != 0) && running->currentBurst == 0) // Hora de fazer IO
             {
@@ -93,6 +102,10 @@ void timerInterrupt(Scheduler *scheduler)
         }
         else
         {
+            if (isZeroCredits(scheduler->readyQueue))
+            {
+                recalculateCredits(scheduler);
+            }
             scheduler->running = dequeReadyProcess(scheduler->readyQueue);
             if (scheduler->running != NULL)
             {
@@ -109,6 +122,9 @@ void unblockProcesses(Scheduler *scheduler)
     Process *processUnblocked = dequeueBlockedProcess(scheduler->blockedQueue, scheduler->currentMs);
     while (processUnblocked != NULL)
     {
+        scheduler->currentBiggestOrder++;
+        processUnblocked->order = scheduler->currentBiggestOrder;
+        printf("Process %s unblocked at %dms. [Credits: %d, Current Burst: %d, Left CPU ms: %d]\n", processUnblocked->name, scheduler->currentMs, processUnblocked->credits, processUnblocked->currentBurst, processUnblocked->leftCPUms);
         addReadyProcess(scheduler->readyQueue, processUnblocked);
         processUnblocked = dequeueBlockedProcess(scheduler->blockedQueue, scheduler->currentMs);
     }

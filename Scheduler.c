@@ -26,6 +26,7 @@ void addProcesses(Scheduler *scheduler, Process **arrayOfProcesses, int arrayCou
 {
     for (int i = 0; i < arrayCount; i++)
     {
+        arrayOfProcesses[i]->entryTime = scheduler->currentMs; // Register arrival time
         addReadyProcess(scheduler->readyQueue, arrayOfProcesses[i]);
         scheduler->currentBiggestOrder++;
     }
@@ -56,6 +57,10 @@ void timerInterrupt(Scheduler *scheduler)
                     free(scheduler->exited);
                 }
                 scheduler->exited = running;
+
+                unsigned int turnaroundTime = scheduler ->currentMs - scheduler->exited->entryTime;
+                printf("Process %s finished. Turnaround time: %d ms\n", scheduler->exited->name, turnaroundTime);
+
                 scheduler->running = NULL;
                 if (isZeroCredits(scheduler->readyQueue))
                 {
@@ -130,23 +135,48 @@ int isDone(Scheduler *scheduler)
 
 void printScheduler(Scheduler *scheduler)
 {
-    printf("\n");
 
-    printf("Current time: %d\n", scheduler->currentMs);
+    // Exibe o tempo atual
+    printf("Current time: %d ms\n", scheduler->currentMs);
 
+    // Exibe o processo em execução
     if (scheduler->running != NULL)
     {
-        printf("Running:\n");
-        printf("Process ID: %s, Credits: %d\n", scheduler->running->name, scheduler->running->credits);
+        printf("Running Process: %s, Credits: %d, Remaining CPU Time: %d ms\n", 
+               scheduler->running->name, scheduler->running->credits, scheduler->running->leftCPUms);
+    }
+    else
+    {
+        printf("Running Process: None\n");
     }
 
-    printReadyQueue(scheduler->readyQueue);
+    // Exibe a fila de prontos
+    if (scheduler->readyQueue->size > 0)
+    {
+        printReadyQueue(scheduler->readyQueue);
+    }
+    else
+    {
+        printf("Ready Queue is empty.\n");
+    }
 
-    printBlockedQueue(scheduler->blockedQueue);
+    // Exibe a fila de bloqueados
+    if (scheduler->blockedQueue->size > 0)
+    {
+        printBlockedQueue(scheduler->blockedQueue);
+    }
+    else
+    {
+        printf("Blocked Queue is empty.\n");
+    }
 
+    // Exibe o último processo que terminou
     if (scheduler->exited != NULL)
     {
-        printf("Exited:\n");
-        printf("Process ID: %s, Credits: %d\n", scheduler->exited->name, scheduler->exited->credits);
+        printf("Exited Process: %s, Total CPU Time Used: %d ms\n", 
+               scheduler->exited->name, scheduler->exited->totalCPUms);
     }
+    
+    // Forçar atualização imediata na tela
+    fflush(stdout);
 }

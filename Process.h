@@ -14,6 +14,7 @@ typedef struct Process {
 
     unsigned int totalCPUms;       // Total CPU time required
     unsigned int leftCPUms;        // Remaining CPU time
+    unsigned int entryTime;        // Time of arrival of the process
 
     unsigned int order;            // Order of process arrival
     unsigned int priority;         // Process priority level

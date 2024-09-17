@@ -8,15 +8,17 @@
 
 typedef struct BlockedQueueInnerLinkedList BQInnerLinkedList;
 
-struct BlockedQueueInnerLinkedList {
+struct BlockedQueueInnerLinkedList
+{
     BQInnerLinkedList *next; // Next element in the linked list
     Process *process;        // Pointer to the blocked process
     unsigned int key;        // The key (time in ms to be released by IO)
 };
 
-typedef struct BlockedQueue {
-    BQInnerLinkedList *keys[BLOCKED_QUEUE_SIZE];  // Array of processes that are blocked (waiting for I/O)
-    unsigned int size;                            // Amount of processes inside the structure
+typedef struct BlockedQueue
+{
+    BQInnerLinkedList *keys[BLOCKED_QUEUE_SIZE]; // Array of processes that are blocked (waiting for I/O)
+    unsigned int size;                           // Amount of processes inside the structure
 } BlockedQueue;
 
 BlockedQueue *initBlockedQueue();
@@ -40,5 +42,7 @@ Recalcula os créditos de todos os processos dentro dessa estrutura.
 No entanto, como é chamda poucas vezes, a estrutura ainda vale a pena.
 */
 void recalculateCreditsFromBlockeds(BlockedQueue *queue);
+
+void printBlockedQueue(BlockedQueue *queue);
 
 #endif // BLOCKEDQUEUE_H

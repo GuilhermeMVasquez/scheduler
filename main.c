@@ -28,7 +28,6 @@ int main()
     arrayOfProcesses[3] = initProcess("D", 0, 0, 10, 4, 3);
 
     addProcesses(scheduler, arrayOfProcesses, 4);
-    printReadyQueue(scheduler->readyQueue);
 
     sa.sa_handler = &schedulerTimeInterruption;
     sa.sa_flags = SA_RESTART;
@@ -45,8 +44,6 @@ int main()
     while (!isDone(scheduler))
     {
     }
-
-    printf("All processes have finished.\n");
 
     return 0;
 }

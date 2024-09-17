@@ -30,4 +30,6 @@ void recalculateCredits(Scheduler *scheduler);
 
 int isDone(Scheduler *scheduler);
 
+void printScheduler(Scheduler *scheduler);
+
 #endif // SCHEDULER_H

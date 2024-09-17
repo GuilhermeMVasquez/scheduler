@@ -92,14 +92,15 @@ void printReadyQueue(ReadyQueue *queue)
 {
     if (queue->head == NULL)
     {
-        printf("ReadyQueue is empty.\n");
         return;
     }
+
+    printf("Ready Queue:\n");
 
     Node *current = queue->head;
     while (current != NULL)
     {
-        printf("Process ID: %s, credits: %d, Order: %d\n", current->process->name, current->process->credits, current->process->order);
+        printf("Process ID: %s, Credits: %d\n", current->process->name, current->process->credits);
         current = current->next;
     }
 }

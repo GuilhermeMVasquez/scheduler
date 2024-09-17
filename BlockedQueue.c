@@ -102,3 +102,21 @@ void recalculateCreditsFromBlockeds(BlockedQueue *queue)
         }
     }
 }
+
+void printBlockedQueue(BlockedQueue *queue)
+{
+    for (unsigned int i = 0; i < BLOCKED_QUEUE_SIZE; i++)
+    {
+        BQInnerLinkedList *node = queue->keys[i];
+        if (node != NULL)
+        {
+            printf("Blocked Queue:\n");
+        }
+
+        while (node != NULL)
+        {
+            printf("Process ID: %s, Credits: %d\n", node->process->name, node->process->credits);
+            node = node->next;
+        }
+    }
+}

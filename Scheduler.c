@@ -59,6 +59,21 @@ void timerInterrupt(Scheduler *scheduler)
                 scheduler->running = NULL;
                 printf("Process %s exited at %dms. [Credits: %d, Current Burst: %d, Left CPU ms: %d]\n", running->name, scheduler->currentMs, running->credits, running->currentBurst, running->leftCPUms);
             }
+            else if ((running->burstMs != 0) && running->currentBurst == 0) // Hora de fazer IO
+            {
+                addBlockedProcess(scheduler->blockedQueue, running, scheduler->currentMs + running->ioMs + 1);
+                scheduler->running = NULL;
+                printf("Process %s blocked at %dms. [Credits: %d, Current Burst: %d, Left CPU ms: %d]\n", running->name, scheduler->currentMs, running->credits, running->currentBurst, running->leftCPUms);
+                if (isZeroCredits(scheduler->readyQueue))
+                {
+                    recalculateCredits(scheduler);
+                }
+                scheduler->running = dequeReadyProcess(scheduler->readyQueue);
+                if (scheduler->running != NULL)
+                {
+                    printf("Process %s started at %dms. [Credits: %d, Current Burst: %d, Left CPU ms: %d]\n", scheduler->running->name, scheduler->currentMs, scheduler->running->credits, scheduler->running->currentBurst, scheduler->running->leftCPUms);
+                }
+            }
             else if (running->credits == 0) // Creditos acabaram, hora de trocar
             {
                 if (isZeroCredits(scheduler->readyQueue))
@@ -70,21 +85,6 @@ void timerInterrupt(Scheduler *scheduler)
                 scheduler->running = dequeReadyProcess(scheduler->readyQueue);
                 addReadyProcess(scheduler->readyQueue, running);
                 printf("Process %s preempted at %dms. [Credits: %d, Current Burst: %d, Left CPU ms: %d]\n", running->name, scheduler->currentMs, running->credits, running->currentBurst, running->leftCPUms);
-                if (scheduler->running != NULL)
-                {
-                    printf("Process %s started at %dms. [Credits: %d, Current Burst: %d, Left CPU ms: %d]\n", scheduler->running->name, scheduler->currentMs, scheduler->running->credits, scheduler->running->currentBurst, scheduler->running->leftCPUms);
-                }
-            }
-            else if ((running->burstMs != 0) && running->currentBurst == 0) // Hora de fazer IO
-            {
-                addBlockedProcess(scheduler->blockedQueue, running, scheduler->currentMs + running->ioMs + 1);
-                scheduler->running = NULL;
-                printf("Process %s blocked at %dms. [Credits: %d, Current Burst: %d, Left CPU ms: %d]\n", running->name, scheduler->currentMs, running->credits, running->currentBurst, running->leftCPUms);
-                if (isZeroCredits(scheduler->readyQueue))
-                {
-                    recalculateCredits(scheduler);
-                }
-                scheduler->running = dequeReadyProcess(scheduler->readyQueue);
                 if (scheduler->running != NULL)
                 {
                     printf("Process %s started at %dms. [Credits: %d, Current Burst: %d, Left CPU ms: %d]\n", scheduler->running->name, scheduler->currentMs, scheduler->running->credits, scheduler->running->currentBurst, scheduler->running->leftCPUms);

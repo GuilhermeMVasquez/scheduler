@@ -27,6 +27,7 @@ void addProcesses(Scheduler *scheduler, Process **arrayOfProcesses, int arrayCou
     for (int i = 0; i < arrayCount; i++)
     {
         addReadyProcess(scheduler->readyQueue, arrayOfProcesses[i]);
+        scheduler->currentBiggestOrder++;
     }
 }
 
@@ -79,6 +80,8 @@ void timerInterrupt(Scheduler *scheduler)
                 {
                     recalculateCredits(scheduler);
                 }
+                scheduler->currentBiggestOrder++;
+                scheduler->running->order = scheduler->currentBiggestOrder;
                 scheduler->running = dequeReadyProcess(scheduler->readyQueue);
                 addReadyProcess(scheduler->readyQueue, running);
                 printf("Process %s preempted at %dms. [Credits: %d, Current Burst: %d, Left CPU ms: %d]\n", running->name, scheduler->currentMs, running->credits, running->currentBurst, running->leftCPUms);

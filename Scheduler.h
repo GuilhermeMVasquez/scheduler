@@ -10,6 +10,8 @@ typedef struct Scheduler
     ReadyQueue *readyQueue;     // Queue for ready processes
     BlockedQueue *blockedQueue; // Queue for blocked processes
 
+    unsigned int currentBiggestOrder;
+
     Process *exited;  // Pointer to the last exited process
     Process *running; // Pointer to the currently running process
 

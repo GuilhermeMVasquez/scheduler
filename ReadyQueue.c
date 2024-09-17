@@ -21,7 +21,7 @@ void addReadyProcess(ReadyQueue *queue, Process *process)
     newNode->process = process;
     newNode->next = NULL;
 
-    if (queue->head == NULL || queue->head->process->credits < process->credits || (queue->head->process->credits == process->credits && queue->head->process->order < process->order))
+    if (queue->head == NULL || queue->head->process->credits < process->credits || (queue->head->process->credits == process->credits && queue->head->process->order > process->order))
     {
         newNode->next = queue->head;
         queue->head = newNode;
@@ -30,7 +30,7 @@ void addReadyProcess(ReadyQueue *queue, Process *process)
     }
 
     Node *current = queue->head;
-    while (current->next != NULL && (current->next->process->credits > process->credits || (current->next->process->credits == process->credits && current->next->process->order > process->order)))
+    while (current->next != NULL && (current->next->process->credits > process->credits || (current->next->process->credits == process->credits && current->next->process->order < process->order)))
     {
         current = current->next;
     }

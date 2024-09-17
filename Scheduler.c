@@ -32,50 +32,72 @@ void addProcesses(Scheduler *scheduler, Process **arrayOfProcesses, int arrayCou
 
 void timerInterrupt(Scheduler *scheduler)
 {
-    scheduler->currentMs++;
+    unblockProcesses(scheduler);
 
-    if (!isDone(scheduler))
+    Process *running = scheduler->running;
+
+    if (running != NULL)
     {
-        unblockProcesses(scheduler);
+        running->credits--;
+        running->currentBurst--;
+        running->leftCPUms--;
+    }
 
-        Process *running = scheduler->running;
-
-        if (running != NULL)
+    if (running == NULL || running->credits == 0 || running->currentBurst == 0 || running->leftCPUms == 0)
+    {
+        if (running != NULL) // Existe running
         {
-            running->credits--;
-            running->currentBurst--;
-            running->leftCPUms--;
+            if (running->leftCPUms == 0) // Processo terminou
+            {
+                if (scheduler->exited != NULL)
+                {
+                    free(scheduler->exited);
+                }
+                scheduler->exited = running;
+                scheduler->running = NULL;
+                printf("Process %s exited at %dms. [Credits: %d, Current Burst: %d, Left CPU ms: %d]\n", running->name, scheduler->currentMs, running->credits, running->currentBurst, running->leftCPUms);
+            }
+            else if (running->currentBurst == 0) // Hora de fazer IO
+            {
+                addBlockedProcess(scheduler->blockedQueue, running, scheduler->currentMs + running->ioMs);
+                scheduler->running = NULL;
+                printf("Process %s blocked at %dms. [Credits: %d, Current Burst: %d, Left CPU ms: %d]\n", running->name, scheduler->currentMs, running->credits, running->currentBurst, running->leftCPUms);
+                if (isZeroCredits(scheduler->readyQueue))
+                {
+                    recalculateCredits(scheduler);
+                }
+                scheduler->running = dequeReadyProcess(scheduler->readyQueue);
+                if (scheduler->running != NULL)
+                {
+                    printf("Process %s started at %dms. [Credits: %d, Current Burst: %d, Left CPU ms: %d]\n", scheduler->running->name, scheduler->currentMs, scheduler->running->credits, scheduler->running->currentBurst, scheduler->running->leftCPUms);
+                }
+            }
+            else if (running->credits == 0) // Creditos acabaram, hora de trocar
+            {
+                if (isZeroCredits(scheduler->readyQueue))
+                {
+                    recalculateCredits(scheduler);
+                }
+                scheduler->running = dequeReadyProcess(scheduler->readyQueue);
+                addReadyProcess(scheduler->readyQueue, running);
+                printf("Process %s preempted at %dms. [Credits: %d, Current Burst: %d, Left CPU ms: %d]\n", running->name, scheduler->currentMs, running->credits, running->currentBurst, running->leftCPUms);
+                if (scheduler->running != NULL)
+                {
+                    printf("Process %s started at %dms. [Credits: %d, Current Burst: %d, Left CPU ms: %d]\n", scheduler->running->name, scheduler->currentMs, scheduler->running->credits, scheduler->running->currentBurst, scheduler->running->leftCPUms);
+                }
+            }
         }
-
-        if (running == NULL || running->credits == 0 || running->currentBurst == 0 || running->leftCPUms == 0)
+        else
         {
-            if (running != NULL) // Existe running
-            {
-                if (running->leftCPUms == 0) // Processo terminou
-                {
-                    scheduler->exited = running;
-                    scheduler->running = NULL;
-                }
-                else if (running->currentBurst == 0) // Hora de fazer IO
-                {
-                    addBlockedProcess(scheduler->blockedQueue, running, scheduler->currentMs + running->ioMs);
-                    scheduler->running = NULL;
-                }
-                else if (running->credits == 0) // Creditos acabaram, hora de trocar
-                {
-                    addReadyProcess(scheduler->readyQueue, running);
-                    scheduler->running = NULL;
-                }
-            }
-
-            if (isZeroCredits(scheduler->readyQueue)) // Todos os processos tem 0 creditos
-            {
-                recalculateCredits(scheduler);
-            }
-
             scheduler->running = dequeReadyProcess(scheduler->readyQueue);
+            if (scheduler->running != NULL)
+            {
+                printf("Process %s started at %dms. [Credits: %d, Current Burst: %d, Left CPU ms: %d]\n", scheduler->running->name, scheduler->currentMs, scheduler->running->credits, scheduler->running->currentBurst, scheduler->running->leftCPUms);
+            }
         }
     }
+
+    scheduler->currentMs++;
 }
 
 void unblockProcesses(Scheduler *scheduler)

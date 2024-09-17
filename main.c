@@ -28,16 +28,17 @@ int main()
     arrayOfProcesses[3] = initProcess("D", 0, 0, 10, 4, 3);
 
     addProcesses(scheduler, arrayOfProcesses, 4);
+    printReadyQueue(scheduler->readyQueue);
 
     sa.sa_handler = &schedulerTimeInterruption;
     sa.sa_flags = SA_RESTART;
     sigaction(SIGALRM, &sa, NULL);
 
     timer.it_value.tv_sec = 0;
-    timer.it_value.tv_usec = 1000;
+    timer.it_value.tv_usec = 10000;
 
     timer.it_interval.tv_sec = 0;
-    timer.it_interval.tv_usec = 1000;
+    timer.it_interval.tv_usec = 10000;
 
     setitimer(ITIMER_REAL, &timer, NULL);
 

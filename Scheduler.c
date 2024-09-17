@@ -39,11 +39,12 @@ void timerInterrupt(Scheduler *scheduler)
     if (running != NULL)
     {
         running->credits--;
-        running->currentBurst--;
+        if (running->burstMs != 0)
+            running->currentBurst--;
         running->leftCPUms--;
     }
 
-    if (running == NULL || running->credits == 0 || running->currentBurst == 0 || running->leftCPUms == 0)
+    if (running == NULL || running->credits == 0 || (running->currentBurst == 0 && running->burstMs != 0) || running->leftCPUms == 0)
     {
         if (running != NULL) // Existe running
         {
@@ -59,7 +60,7 @@ void timerInterrupt(Scheduler *scheduler)
             }
             else if (running->currentBurst == 0) // Hora de fazer IO
             {
-                addBlockedProcess(scheduler->blockedQueue, running, scheduler->currentMs + running->ioMs);
+                addBlockedProcess(scheduler->blockedQueue, running, scheduler->currentMs + running->ioMs + 1);
                 scheduler->running = NULL;
                 printf("Process %s blocked at %dms. [Credits: %d, Current Burst: %d, Left CPU ms: %d]\n", running->name, scheduler->currentMs, running->credits, running->currentBurst, running->leftCPUms);
                 if (isZeroCredits(scheduler->readyQueue))
